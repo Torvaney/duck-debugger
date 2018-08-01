@@ -94,14 +94,16 @@ type alias Exchange =
 
 type alias Model =
     { history : List Exchange
-    , typing  : Maybe String
+    , typing  : String
+    , textKey : Int
     }
 
 
 init : ( Model, Cmd Msg )
 init =
     ( { history = [ ]
-      , typing  = Nothing
+      , typing  = ""
+      , textKey = 0
       }
     , Cmd.none
     )
@@ -136,21 +138,21 @@ viewExchange e =
 txt : Model -> Input.Text style variation Msg
 txt model =
     { onChange = Typing
-    , value    = Maybe.withDefault "Enter text here..." model.typing
+    , value    = if isBlank model.typing then "Enter text here" else model.typing
     , label    = Input.hiddenLabel "text input"
     , options  = [ Input.allowSpellcheck
+                 , Input.focusOnLoad
+                 , Input.textKey (toString model.textKey)
                  ]
     }
 
 
 inputStyle : Model -> MyStyles
 inputStyle model =
-    case model.typing of
-        Just s ->
-            Default
-
-        Nothing ->
-            InputBoxEmpty
+    if isBlank model.typing then
+        InputBoxEmpty
+    else
+        Default
 
 
 onEnter : msg -> Element.Attribute variation msg
@@ -176,7 +178,7 @@ viewChat model =
           []
           [ el Default
               [ width (percent 80), alignLeft] <|
-              Input.text (inputStyle model) [ onEnter Ask ] (txt model)
+                Input.text (inputStyle model) [ onEnter Ask ] (txt model)
           , button Button
               [ onClick Ask, alignRight, width (percent 20) ]
               ( text "Ask" )
@@ -216,15 +218,10 @@ isBlank s =
 
 updateHistory : Model -> List Exchange
 updateHistory model =
-    case model.typing of
-        Just s ->
-            if isBlank s then
-                model.history
-            else
-                (respond s) :: model.history
-
-        Nothing ->
-            model.history
+    if isBlank model.typing then
+        model.history
+    else
+        (respond model.typing) :: model.history
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -233,12 +230,13 @@ update msg model =
         Ask ->
             ( { model
               | history = updateHistory model
-              , typing  = Nothing
+              , typing  = ""
+              , textKey = model.textKey + 1
               }
             , Cmd.none
             )
         Typing s ->
-            ( { model | typing = Just s }, Cmd.none )
+            ( { model | typing = s }, Cmd.none )
 
 
 -- SUBSCRIPTIONS
