@@ -63,6 +63,7 @@ stylesheet =
             , Border.all 0.1
             , Border.rounded 8
             , Color.background blue
+            , Color.border darkBlue
             , Shadow.simple
             , Font.size 20
             , Font.typeface
@@ -73,8 +74,8 @@ stylesheet =
             [ Color.text black
             , Border.all 0.1
             , Border.rounded 8
-            , Color.background white
-            , Color.border darkGray
+            , Color.background lightGray
+            , Color.border gray
             , Shadow.simple
             , Font.size 20
             , Font.typeface
@@ -120,6 +121,12 @@ type Msg
 -- VIEW
 
 
+formatResponse : String -> String
+formatResponse s =
+    s |>
+    String.Extra.softWrap 20
+
+
 wrapperEl : Element MyStyles variation msg -> Element MyStyles variation msg
 wrapperEl e =
     el Default [] e
@@ -129,8 +136,8 @@ viewExchange : Exchange -> Element MyStyles variation msg
 viewExchange e =
     column Default [ width (percent 100) ]
         [ el Default [ padding 5 ] empty
-        , wrapperEl <| el UserMessage [ alignRight, padding 2 ] (text e.user)
-        , wrapperEl <| el ElizaMessage [ alignLeft, padding 2 ] (text e.eliza)
+        , wrapperEl <| el UserMessage [ alignRight, padding 2 ] <| text <| formatResponse e.user
+        , wrapperEl <| el ElizaMessage [ alignLeft, padding 2 ] <| text <| formatResponse e.eliza
         , el Default [ padding 5 ] empty
         ]
 
