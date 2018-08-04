@@ -27,60 +27,51 @@ type MyStyles
     | ElizaMessage
 
 
+baseStyle =
+    [ Font.size 20
+    , Font.typeface
+        [ Font.font "Helvetica"
+        ]
+    ]
+
+
 stylesheet : Style.StyleSheet MyStyles variation
 stylesheet =
     Style.styleSheet
         [ Style.style Default
-            [ Color.text black
-            , Color.background white
-            , Font.size 20
-            , Font.typeface
-                [ Font.font "Helvetica"
-                ]
-            ]
+            ([ Color.text black ] ++ baseStyle)
         , Style.style InputBoxEmpty
-            [ Color.text darkGray
-            , Color.background white
-            , Font.size 20
-            , Font.typeface
-                [ Font.font "Helvetica"
-                ]
-            ]
+            ([ Color.text darkGray ] ++ baseStyle)
         , Style.style Button
-            [ Color.text black
-            , Border.all 0.1
-            , Border.rounded 8
-            , Color.background white
-            , Shadow.simple
-            , Font.size 20
-            , Font.typeface
-                [ Font.font "Helvetica"
-                ]
-            ]
+            ([ Color.text black
+             , Border.all 0.1
+             , Border.rounded 8
+             , Color.background white
+             , Shadow.simple
+             , Font.size 20
+             ]
+                ++ baseStyle
+            )
         , Style.style UserMessage
-            [ Color.text white
-            , Border.all 0.1
-            , Border.rounded 8
-            , Color.background blue
-            , Color.border darkBlue
-            , Shadow.simple
-            , Font.size 20
-            , Font.typeface
-                [ Font.font "Helvetica"
-                ]
-            ]
+            ([ Color.text white
+             , Border.all 0.1
+             , Border.rounded 8
+             , Color.background blue
+             , Color.border darkBlue
+             , Shadow.simple
+             ]
+                ++ baseStyle
+            )
         , Style.style ElizaMessage
-            [ Color.text black
-            , Border.all 0.1
-            , Border.rounded 8
-            , Color.background lightGray
-            , Color.border gray
-            , Shadow.simple
-            , Font.size 20
-            , Font.typeface
-                [ Font.font "Helvetica"
-                ]
-            ]
+            ([ Color.text black
+             , Border.all 0.1
+             , Border.rounded 8
+             , Color.background lightGray
+             , Color.border gray
+             , Shadow.simple
+             ]
+                ++ baseStyle
+            )
         ]
 
 
