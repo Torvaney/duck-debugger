@@ -1,10 +1,9 @@
 module Main exposing (..)
 
 import Color exposing (..)
-import Html exposing(Html, program)
+import Html exposing (Html, program)
 import Json.Decode as Json
 import String.Extra
-
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick)
@@ -14,11 +13,11 @@ import Style.Border as Border
 import Style.Color as Color
 import Style.Font as Font
 import Style.Shadow as Shadow
-
 import Eliza
 
 
 -- Style
+
 
 type MyStyles
     = Default
@@ -85,29 +84,32 @@ stylesheet =
         ]
 
 
+
 -- MODEL
 
 
 type alias Exchange =
     { eliza : String
-    , user  : String
+    , user : String
     }
+
 
 type alias Model =
     { history : List Exchange
-    , typing  : String
+    , typing : String
     , textKey : Int
     }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( { history = [ ]
-      , typing  = ""
+    ( { history = []
+      , typing = ""
       , textKey = 0
       }
     , Cmd.none
     )
+
 
 
 -- MESSAGES
@@ -115,16 +117,18 @@ init =
 
 type Msg
     = Ask
-    | Typing String  -- Placeholder for now
+    | Typing String
 
 
+
+-- Placeholder for now
 -- VIEW
 
 
 formatResponse : String -> String
 formatResponse s =
-    s |>
-    String.Extra.softWrap 20
+    s
+        |> String.Extra.softWrap 20
 
 
 wrapperEl : Element MyStyles variation msg -> Element MyStyles variation msg
@@ -134,7 +138,8 @@ wrapperEl e =
 
 viewExchange : Exchange -> Element MyStyles variation msg
 viewExchange e =
-    column Default [ width (percent 100) ]
+    column Default
+        [ width (percent 100) ]
         [ el Default [ padding 5 ] empty
         , wrapperEl <| el UserMessage [ alignRight, padding 2 ] <| text <| formatResponse e.user
         , wrapperEl <| el ElizaMessage [ alignLeft, padding 2 ] <| text <| formatResponse e.eliza
@@ -145,12 +150,17 @@ viewExchange e =
 txt : Model -> Input.Text style variation Msg
 txt model =
     { onChange = Typing
-    , value    = if isBlank model.typing then "Enter text here" else model.typing
-    , label    = Input.hiddenLabel "text input"
-    , options  = [ Input.allowSpellcheck
-                 , Input.focusOnLoad
-                 , Input.textKey (toString model.textKey)
-                 ]
+    , value =
+        if isBlank model.typing then
+            "Enter text here"
+        else
+            model.typing
+    , label = Input.hiddenLabel "text input"
+    , options =
+        [ Input.allowSpellcheck
+        , Input.focusOnLoad
+        , Input.textKey (toString model.textKey)
+        ]
     }
 
 
@@ -177,35 +187,38 @@ onEnter message =
 
 viewChat : Model -> Element MyStyles variation Msg
 viewChat model =
-    column Default [ width (percent 33), height (percent 80) ]
-      [ column Default
-          [ scrollbars, height (percent 80), alignBottom ]
-          ( List.map viewExchange <| List.reverse model.history )
-      , row Default
-          []
-          [ el Default
-              [ width (percent 80), alignLeft] <|
+    column Default
+        [ width (percent 33), height (percent 80) ]
+        [ column Default
+            [ scrollbars, height (percent 80), alignBottom ]
+            (List.map viewExchange <| List.reverse model.history)
+        , row Default
+            []
+            [ el Default
+                [ width (percent 80), alignLeft ]
+              <|
                 Input.text (inputStyle model) [ onEnter Ask ] (txt model)
-          , button Button
-              [ onClick Ask, alignRight, width (percent 20) ]
-              ( text "Ask" )
-          ]
-      ]
+            , button Button
+                [ onClick Ask, alignRight, width (percent 20) ]
+                (text "Ask")
+            ]
+        ]
 
 
 view : Model -> Html Msg
 view model =
     viewport stylesheet <|
-      (row Default
-        [ width (percent 100), height (percent 100) ]
-        [ column Default
-          [ center, width fill, height fill ]
-          [ el Default [height (percent 10)] (text "The Duck Debugger")
-          , ( viewChat model )
-          , el Default [height (percent 10)] (text "---")
-          ]
-        ]
-      )
+        (row Default
+            [ width (percent 100), height (percent 100) ]
+            [ column Default
+                [ center, width fill, height fill ]
+                [ el Default [ height (percent 10) ] (text "The Duck Debugger")
+                , (viewChat model)
+                , el Default [ height (percent 10) ] (text "---")
+                ]
+            ]
+        )
+
 
 
 -- UPDATE
@@ -214,7 +227,7 @@ view model =
 respond : String -> Exchange
 respond s =
     { eliza = Eliza.respond s
-    , user  = s
+    , user = s
     }
 
 
@@ -236,14 +249,16 @@ update msg model =
     case msg of
         Ask ->
             ( { model
-              | history = updateHistory model
-              , typing  = ""
-              , textKey = model.textKey + 1
+                | history = updateHistory model
+                , typing = ""
+                , textKey = model.textKey + 1
               }
             , Cmd.none
             )
+
         Typing s ->
             ( { model | typing = s }, Cmd.none )
+
 
 
 -- SUBSCRIPTIONS
@@ -252,6 +267,7 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.none
+
 
 
 -- MAIN
