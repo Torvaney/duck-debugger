@@ -4,7 +4,6 @@ import Dict exposing (Dict)
 import Random
 import Random.Extra
 import Regex exposing (Regex, regex)
-import String.Extra
 import String.Interpolate
 import Eliza.Data
 
@@ -19,6 +18,7 @@ type alias Reflection =
 
 type alias Response =
     ( Regex, List String )
+
 
 
 -- Methods
@@ -43,26 +43,33 @@ reflect s =
 
 pickOne : (String -> msg) -> List String -> Cmd msg
 pickOne f ls =
-    Random.Extra.sample ls |>
-        Random.map (Maybe.withDefault "I don't know what to say...") |>
-        Random.generate f
+    Random.Extra.sample ls
+        |> Random.map (Maybe.withDefault "I don't know what to say...")
+        |> Random.generate f
 
 
 matchPattern : Regex.Regex -> String -> Maybe Regex.Match
 matchPattern pattern s =
-    Regex.find (Regex.AtMost 1) pattern s |>
-        List.head
+    Regex.find (Regex.AtMost 1) pattern s
+        |> List.head
 
 
 extractSubmatches : Regex.Match -> List String
 extractSubmatches match =
-    match.submatches |>
-        List.map (Maybe.withDefault "")
+    match.submatches
+        |> List.map (Maybe.withDefault "")
 
 
 interpolateResponses : List String -> List String -> List String
 interpolateResponses candidates fill =
-    List.map (\c -> String.Interpolate.interpolate c fill) candidates
+    let
+        reflectedFill =
+            List.map reflect fill
+
+        interpolateCandidates =
+            \c -> String.Interpolate.interpolate c reflectedFill
+    in
+        List.map interpolateCandidates candidates
 
 
 matchResponse : String -> Response -> Maybe (List String)
@@ -76,9 +83,9 @@ matchResponse s ( pattern, candidates ) =
 pickResponse : (String -> msg) -> String -> Cmd msg
 pickResponse f s =
     List.map (matchResponse s) Eliza.Data.responses
-        |> List.filterMap identity  -- Remove any Nothings
-        |> List.head                -- Take the first Just (List String)
-        |> Maybe.withDefault []     -- [] becomes Nothing to fallback in pickOne
+        |> List.filterMap identity
+        |> List.head
+        |> Maybe.withDefault []
         |> pickOne f
 
 
