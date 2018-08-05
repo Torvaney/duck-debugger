@@ -13,6 +13,7 @@ import Style.Border as Border
 import Style.Color as Color
 import Style.Font as Font
 import Style.Shadow as Shadow
+import Markdown
 import Eliza
 
 
@@ -21,6 +22,8 @@ import Eliza
 
 type MyStyles
     = Default
+    | Title
+    | Summary
     | InputBoxEmpty
     | Button
     | UserMessage
@@ -41,6 +44,20 @@ stylesheet =
     Style.styleSheet
         [ Style.style Default
             ([ Color.text black ] ++ baseStyle)
+        , Style.style Title
+            [ Color.text black
+            , Font.size 30
+            , Font.typeface
+                [ Font.font "Helvetica"
+                ]
+            ]
+        , Style.style Summary
+            [ Color.text black
+            , Font.size 18
+            , Font.typeface
+                [ Font.font "Helvetica"
+                ]
+            ]
         , Style.style InputBoxEmpty
             ([ Color.text darkGray ] ++ baseStyle)
         , Style.style Button
@@ -82,14 +99,14 @@ stylesheet =
 
 type alias Exchange =
     { eliza : String
-    , user  : String
+    , user : String
     }
 
 
 type alias Model =
     { history : List Exchange
-    , typing  : String
-    , asking  : Maybe String
+    , typing : String
+    , asking : Maybe String
     , textKey : Int
     }
 
@@ -97,8 +114,8 @@ type alias Model =
 init : ( Model, Cmd Msg )
 init =
     ( { history = []
-      , typing  = ""
-      , asking  = Nothing
+      , typing = ""
+      , asking = Nothing
       , textKey = 0
       }
     , Cmd.none
@@ -200,6 +217,23 @@ viewChat model =
         ]
 
 
+summary : String
+summary =
+    """
+[Duck debugging](https://en.wikipedia.org/wiki/Rubber_duck_debugging) is a method
+of solving problems by talking them through. The listener could be a colleague,
+a friend or even... a rubber duck? A computer program?
+
+Try it out! Talk through your problem with the \x1F986.
+
+The Duck Debugger is based on the seminal computer program
+[ELIZA](https://en.wikipedia.org/wiki/ELIZA), with minor details altered to
+suit duck debugging.
+
+[Source code](https://github.com/Torvaney/duck-debugger)
+"""
+
+
 view : Model -> Html Msg
 view model =
     viewport stylesheet <|
@@ -207,9 +241,13 @@ view model =
             [ width (percent 100), height (percent 100) ]
             [ column Default
                 [ center, width fill, height fill ]
-                [ el Default [ height (percent 10) ] (text "The Duck Debugger")
+                [ el Default [ height (percent 2) ] empty
+                , el Title [ height (percent 10) ] (text "\x1F986 The Duck Debugger \x1F986")
                 , (viewChat model)
-                , el Default [ height (percent 10) ] (text "---")
+                , column Summary [ height (percent 10), width (percent 60) ]
+                    [ html <| Markdown.toHtml [] summary
+                    , el Default [ height (percent 50) ] empty
+                    ]
                 ]
             ]
         )
@@ -231,7 +269,7 @@ updateHistory model question response =
             if isBlank q then
                 model.history
             else
-                { user = q, eliza = response} :: model.history
+                { user = q, eliza = response } :: model.history
 
         Nothing ->
             model.history
@@ -247,8 +285,8 @@ update msg model =
     case msg of
         Ask ->
             ( { model
-                | typing  = ""
-                , asking  = Just model.typing
+                | typing = ""
+                , asking = Just model.typing
                 , textKey = model.textKey + 1
               }
             , Eliza.respond sendResponse model.typing
@@ -256,9 +294,9 @@ update msg model =
 
         Respond s ->
             ( { model
-              | typing  = ""
-              , asking  = Nothing
-              , history = updateHistory model model.asking s
+                | typing = ""
+                , asking = Nothing
+                , history = updateHistory model model.asking s
               }
             , Cmd.none
             )
