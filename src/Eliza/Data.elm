@@ -189,7 +189,7 @@ responses =
     , ( regex "my (.*)"
       , [ "I see, your {0}."
         , "Why do you say that your {0}?"
-        , "Does your {0} cause any problems?"
+        , "Does that cause any problems?"
         ]
       )
     , ( regex "you (.*)"
