@@ -81,13 +81,14 @@ stylesheet =
 
 type alias Exchange =
     { eliza : String
-    , user : String
+    , user  : String
     }
 
 
 type alias Model =
     { history : List Exchange
-    , typing : String
+    , typing  : String
+    , asking  : Maybe String
     , textKey : Int
     }
 
@@ -95,7 +96,8 @@ type alias Model =
 init : ( Model, Cmd Msg )
 init =
     ( { history = []
-      , typing = ""
+      , typing  = ""
+      , asking  = Nothing
       , textKey = 0
       }
     , Cmd.none
@@ -108,6 +110,7 @@ init =
 
 type Msg
     = Ask
+    | Respond String
     | Typing String
 
 
@@ -215,24 +218,27 @@ view model =
 -- UPDATE
 
 
-respond : String -> Exchange
-respond s =
-    { eliza = Eliza.respond s
-    , user = s
-    }
-
-
 isBlank : String -> Bool
 isBlank s =
     String.isEmpty <| String.Extra.replace " " "" s
 
 
-updateHistory : Model -> List Exchange
-updateHistory model =
-    if isBlank model.typing then
-        model.history
-    else
-        (respond model.typing) :: model.history
+updateHistory : Model -> Maybe String -> String -> List Exchange
+updateHistory model question response =
+    case question of
+        Just q ->
+            if isBlank q then
+                model.history
+            else
+                { user = q, eliza = response} :: model.history
+
+        Nothing ->
+            model.history
+
+
+sendResponse : String -> Msg
+sendResponse s =
+    Respond s
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -240,9 +246,18 @@ update msg model =
     case msg of
         Ask ->
             ( { model
-                | history = updateHistory model
-                , typing = ""
+                | typing  = ""
+                , asking  = Just model.typing
                 , textKey = model.textKey + 1
+              }
+            , Eliza.respond sendResponse model.typing
+            )
+
+        Respond s ->
+            ( { model
+              | typing  = ""
+              , asking  = Nothing
+              , history = updateHistory model model.asking s
               }
             , Cmd.none
             )

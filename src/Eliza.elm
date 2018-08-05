@@ -1,6 +1,8 @@
-module Eliza exposing (..)
+module Eliza exposing (respond)
 
 import Dict exposing (Dict)
+import Random
+import Random.Extra
 import Regex exposing (Regex, regex)
 import String.Extra
 import String.Interpolate
@@ -19,9 +21,7 @@ type alias Response =
     ( Regex, List String )
 
 
-
 -- Methods
--- Translate from 1st person to 3rd person
 
 
 reflectWord : String -> String
@@ -41,50 +41,47 @@ reflect s =
         |> String.join " "
 
 
-pickOne : List String -> String
-pickOne ls =
-    case List.head ls of
-        Just s ->
-            s
-
-        -- It should never come to this...
-        -- See "( (.*), "Please tell me more" ) in Eliza.Data
-        Nothing ->
-            "I don't know what to say..."
+pickOne : (String -> msg) -> List String -> Cmd msg
+pickOne f ls =
+    Random.Extra.sample ls |>
+        Random.map (Maybe.withDefault "I don't know what to say...") |>
+        Random.generate f
 
 
-matchResponse : String -> Response -> Maybe String
-matchResponse s ( rgx, rsps ) =
-    s
-        |> String.toLower
-        |> Regex.find Regex.All rgx
-        |> List.map .submatches
-        |> List.map (List.map (Maybe.withDefault "..."))
-        |> List.map (List.map reflect)
-        |> List.map (String.Interpolate.interpolate (pickOne rsps))
-        |> List.head
+matchPattern : Regex.Regex -> String -> Maybe Regex.Match
+matchPattern pattern s =
+    Regex.find (Regex.AtMost 1) pattern s |>
+        List.head
 
 
-isSomething : Maybe a -> Bool
-isSomething m =
-    case m of
-        Just x ->
-            True
-
-        Nothing ->
-            False
+extractSubmatches : Regex.Match -> List String
+extractSubmatches match =
+    match.submatches |>
+        List.map (Maybe.withDefault "")
 
 
-pickResponse : String -> String
-pickResponse s =
+interpolateResponses : List String -> List String -> List String
+interpolateResponses candidates fill =
+    List.map (\c -> String.Interpolate.interpolate c fill) candidates
+
+
+matchResponse : String -> Response -> Maybe (List String)
+matchResponse s ( pattern, candidates ) =
+    String.toLower s
+        |> matchPattern pattern
+        |> Maybe.map extractSubmatches
+        |> Maybe.map (interpolateResponses candidates)
+
+
+pickResponse : (String -> msg) -> String -> Cmd msg
+pickResponse f s =
     List.map (matchResponse s) Eliza.Data.responses
-        |> List.filter isSomething
-        |> List.map (Maybe.withDefault "TODO")
-        |> pickOne
+        |> List.filterMap identity  -- Remove any Nothings
+        |> List.head                -- Take the first Just (List String)
+        |> Maybe.withDefault []     -- [] becomes Nothing to fallback in pickOne
+        |> pickOne f
 
 
-respond : String -> String
-respond s =
-    s
-        |> pickResponse
-        |> String.Extra.toSentenceCase
+respond : (String -> msg) -> String -> Cmd msg
+respond f s =
+    pickResponse f s
