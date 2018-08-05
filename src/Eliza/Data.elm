@@ -28,6 +28,7 @@ responses =
       , [ "Why do you need {0}?"
         , "Would it really help you to get {0}?"
         , "Are you sure you need {0}?"
+        , "What problem does getting {0} solve?"
         ]
       )
     , ( regex "why don\\'?t you ([^\\?]*)\\??"
@@ -40,25 +41,21 @@ responses =
       , [ "Do you think you should be able to {0}?"
         , "If you could {0}, what would you do?"
         , "I don't know -- why can't you {0}?"
-        , "Have you really tried?"
         ]
       )
     , ( regex "i can\\'?t ([^\\?]*)"
       , [ "How do you know you can't {0}?"
-        , "Perhaps you could {0} if you tried."
+        , "What are the different ways that you could {0}?"
         , "What would it take for you to {0}?"
         ]
       )
-    , ( regex "i am (.*)"
-      , [ "How do you know you can't {0}?"
-        , "Perhaps you could {0} if you tried."
-        , "What would it take for you to {0}?"
-        ]
-      )
-    , ( regex "i'm (.*)"
-      , [ "Did you come to me because you are {0}?"
-        , "How long have you been {0}?"
-        , "How do you feel about being {0}?"
+    , ( regex "i( a|')m (.*)"
+      , [ "How long have you been {1}?"
+        , "What were you doing before you were {1}?"
+        , "Why do you tell me you're {1}?"
+        , "Why do you think you're {1}?"
+        , "What would happen if you weren't {1}?"
+        , "Do you know anyone else who has been {1}?"
         ]
       )
     , ( regex "are you ([^\\?]*)\\??"
@@ -78,60 +75,59 @@ responses =
       , [ "How do you suppose?"
         , "Perhaps you can answer your own question."
         , "What is it you're really asking?"
+        , "What does the documentation say?"
         ]
       )
     , ( regex "because (.*)"
-      , [ "Is that the real reason?"
-        , "What other reasons come to mind?"
+      , [ "What other reasons come to mind?"
+        , "What other reasons could also be true?"
         , "Does that reason apply to anything else?"
         , "If {0}, what else must be true?"
         ]
       )
     , ( regex "(.*) sorry (.*)"
       , [ "There are many times when no apology is needed."
-        , "What feelings do you have when you apologize?"
+        , "An apology is not necessary"
         ]
       )
     , ( regex "hello(.*)"
       , [ "Hello... I'm glad you could drop by today."
         , "Hi there... how are you today?"
-        , "Hello, how are you feeling today?"
+        , "Hello, what can I help you with?"
         ]
       )
     , ( regex "i think (.*)"
       , [ "Do you doubt {0}?"
         , "Do you really think so?"
         , "But you're not sure {0}?"
-        ]
-      )
-    , ( regex "(.*) friend (.*)"
-      , [ "Tell me more about your friends."
-        , "When you think of a friend, what comes to mind?"
-        , "Why don't you tell me about a childhood friend?"
+        , "What other options could be true?"
         ]
       )
     , ( regex "yes"
       , [ "You seem quite sure."
-        , "OK, but can you elaborate a bit?"
+        , "Ok, but can you elaborate a bit?"
+        , "Yes, definitely? Or yes, probably?"
         ]
       )
     , ( regex "(.*) computer(.*)"
       , [ "Are you really talking about me?"
         , "Does it seem strange to talk to a computer?"
-        , "How do computers make you feel?"
         , "Do you feel threatened by computers?"
+        , "To solve a computer problem, perhaps you have to *think* like a computer..."
         ]
       )
     , ( regex "is it (.*)"
       , [ "Do you think it is {0}?"
         , "Perhaps it's {0} -- what do you think?"
         , "If it were {0}, what would you do?"
+        , "If it were not {0}, what would you do?"
         , "It could well be that {0}."
+        , "Perhaps -- what would it be if not {0}"
         ]
       )
     , ( regex "it is (.*)"
       , [ "You seem very certain."
-        , "If I told you that it probably isn't {0}, what would you feel?"
+        , "If I told you that it probably isn't {0}, what would you think?"
         ]
       )
     , ( regex "can you ([^\\?]*)\\??"
@@ -144,6 +140,7 @@ responses =
       , [ "Perhaps you don't want to {0}."
         , "Do you want to be able to {0}?"
         , "If you could {0}, would you?"
+        , "What would being able to {0} help you solve?"
         ]
       )
     , ( regex "you are (.*)"
@@ -163,37 +160,36 @@ responses =
       , [ "Don't you really {0}?"
         , "Why don't you {0}?"
         , "Do you want to {0}?"
-        ]
-      )
-    , ( regex "i feel (.*)"
-      , [ "Good, tell me more about these feelings."
-        , "Do you often feel {0}?"
-        , "When do you usually feel {0}?"
-        , "When you feel {0}, what do you do?"
+        , "Do you know anyone who would {0}?"
         ]
       )
     , ( regex "i have (.*)"
-      , [ "Why do you tell me that you've {0}?"
+      , [ "How did you find out that you have {0}?"
+        , "When did you find out that you've {0}?"
         , "Have you really {0}?"
         , "Now that you have {0}, what will you do next?"
+        , "What does having {0} cause you to do now?"
+        , "What are the knock-on effects of having {0}?"
         ]
       )
     , ( regex "i would (.*)"
       , [ "Could you explain why you would {0}?"
         , "Why would you {0}?"
         , "Who else knows that you would {0}?"
+        , "If you did {0}, what would you do next?"
         ]
       )
     , ( regex "is there (.*)"
       , [ "Do you think there is {0}?"
         , "It's likely that there is {0}."
         , "Would you like there to be {0}?"
+        , "Is there documentation for {0}?"
         ]
       )
     , ( regex "my (.*)"
       , [ "I see, your {0}."
         , "Why do you say that your {0}?"
-        , "When your {0}, how do you feel?"
+        , "Does your {} cause any problems?"
         ]
       )
     , ( regex "you (.*)"
@@ -202,40 +198,12 @@ responses =
         , "Why do you care whether I {0}?"
         ]
       )
-    , ( regex "why (.*)"
-      , [ "Why don't you tell me the reason why {0}?"
-        , "Why do you think {0}?"
-        ]
-      )
     , ( regex "i want (.*)"
-      , [ "What would it mean to you if you got {0}?"
+      , [ "What would it mean if you got {0}?"
         , "Why do you want {0}?"
         , "What would you do if you got {0}?"
         , "If you got {0}, then what would you do?"
-        ]
-      )
-    , ( regex "(.*) mother(.*)"
-      , [ "Tell me more about your mother."
-        , "What was your relationship with your mother like?"
-        , "How do you feel about your mother?"
-        , "How does this relate to your feelings today?"
-        , "Good family relations are important."
-        ]
-      )
-    , ( regex "(.*) father(.*)"
-      , [ "Tell me more about your father."
-        , "How did your father make you feel?"
-        , "How do you feel about your father?"
-        , "Does your relationship with your father relate to your feelings today?"
-        , "Do you have trouble showing affection with your family?"
-        ]
-      )
-    , ( regex "(.*) child(.*)"
-      , [ "Did you have close friends as a child?"
-        , "What is your favorite childhood memory?"
-        , "Do you remember any dreams or nightmares from childhood?"
-        , "Did the other children sometimes tease you?"
-        , "How do you think your childhood experiences relate to your feelings today?"
+        , "What problems would getting {0} allow you to solve?"
         ]
       )
     , ( regex "(.*)\\?"
@@ -245,23 +213,27 @@ responses =
         , "Why don't you tell me?"
         ]
       )
-    , ( regex "quit"
+    , ( regex "(.*)'?undefined'? is not a function ?(.*)"
+      , [ "Only God can help you now"
+        , "Maybe check the function name?"
+        , "Maybe you could try http://elm-lang.org ?"
+        ]
+      )
+    , ( regex "quit|(good|bye)-?bye"
       , [ "Thank you for talking with me."
         , "Good-bye."
-        , "Thank you, that will be $150.  Have a good day!"
+        , "I hope that helped!"
         ]
       )
     , ( regex "(.*)"
       , [ "Please tell me more."
-        , "Let's change focus a bit... Tell me about your family."
         , "Can you elaborate on that?"
         , "Why do you say that {0}?"
         , "I see."
         , "Very interesting."
         , "{0}."
-        , "I see.  And what does that tell you?"
-        , "How does that make you feel?"
-        , "How do you feel when you say that?"
+        , "I see. And what does that tell you?"
+        , "Is that causing any problems?"
         ]
       )
     ]
