@@ -27,6 +27,7 @@ type MyStyles
     | ElizaMessage
 
 
+baseStyle : List (Style.Property class variation)
 baseStyle =
     [ Font.size 20
     , Font.typeface
