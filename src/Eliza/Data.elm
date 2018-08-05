@@ -231,7 +231,6 @@ responses =
         , "Why do you say that {0}?"
         , "I see."
         , "Very interesting."
-        , "{0}."
         , "I see. And what does that tell you?"
         , "Is that causing any problems?"
         ]
